@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DinnerAi</title>
+    <script type="text/javascript" src="//libjs.pages.dev/d3/7.6.1/d3.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <style>
+        body {
+            margin: 4rem;
+            margin-top: 8rem;
+            background-image: url('bg1.jpeg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        .row {
+            margin: auto;
+            background-attachment: fixed;
+        }
+
+        .img-card {
+            max-width: 100%;
+            height: 10rem;
+        }
+
+        a {
+            color: #043378;
+            text-decoration: none;
+            margin: auto;
+        }
+
+        .btn {
+            background-color: #192734;
+            font-family: American Typewriter, serif;
+            font-size: 12pt;
+        }
+
+        .card-body {
+            height: 90px;
+            padding-bottom: 10px;
+        }
+
+        .card {
+            overflow: hidden;
+            box-shadow: 0 0 3rem -1rem rgba(0, 0, 0, 10);
+            transition: transform 0.1s ease-in-out, box-shadow 0.1s;
+            background-color: #000000;
+        }
+
+        .card-title {
+            color: white;
+            font-family: American Typewriter, serif;
+        }
+
+        .card:hover {
+            transform: translateY(-0.5rem) scale(1.0020);
+            /* box-shadow: 0 0.5em 3rem -1rem rgba(0, 0, 0, 0.5); */
+        }
+
+        .table {
+            width: 1000px;
+            margin: auto;
+            padding: 5px;
+            backdrop-filter: blur(8px);
+            color: white;
+            margin-top: 30px;
+            padding-top: 10px;
+        }
+
+        tr {
+            border-style: hidden;
+        }
+
+        tr:nth-child(even) {
+            /* background-color: aliceblue; */
+        }
+
+        tr:nth-child(odd) {
+            /* background-color: black; */
+            /* color: white; */
+        }
+
+        td:nth-child(1){
+            text-transform: uppercase;
+        }
+
+        th {
+            text-align: center;
+            /* background-color: rgb(177, 219, 255); */
+            padding-bottom: 10px;
+        }
+
+        td {
+            width: 16.66%;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .title {
+            color: white;
+            text-align: center;
+            margin-top: 0px;
+            margin-bottom: 30px;
+            font-family: Snell Roundhand, cursive;
+            font-size: 50pt;
+            text-shadow: #043378;
+            stroke: black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg">
+        <div class="title">
+            <p>Dinner<br>Artificial Intelligence</p>
+        </div>
+        <!-- <div class="filters"></div> -->
+        <div class="row justify-content-md-center">
+            <div class="col-md-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="A.png" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">CS259A</h5>
+                        <button id="btn1" class="btn btn-primary stretched-link" value="CS2596A">Attendance</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="B.png" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">CS259B</h5>
+                        <button id="btn2" class="btn btn-primary stretched-link" value="CS2596B">Attendance</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="C.png" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">CS259C</h5>
+                        <button id="btn3" class="btn btn-primary stretched-link" value="CS2596C">Attendance</button>
+                    </div>
+                </div>
+            </div>
+            <br><br>
+            <div class="table"></div>
+        </div>
+    </div>
+
+    <script>
+        d3.csv('https://docs.google.com/spreadsheets/d/e/2PACX-1vQOWe-YEJw_eKk3NIs1jPc0Uvx6xMZ9Tj8mVmuqn204q4FsyX5a97p7_A099LlzTZ67oMk1DXVfF8Iy/pub?gid=70648839&single=true&output=csv')
+            .then((data) => {
+                console.log('data', data)
+                fields = data.columns.filter(function (key) {
+                    return key == 'NAME' ||
+                        key == 'contact_Number' ||
+                        key == 'preferred_Date' ||
+                        key == 'price_Range'
+                });
+                data = data.filter(data => data.attend == 1);
+                dataset = data;
+                $(document).ready(function () {
+                    $("#btn1").on("click", function (d, i) {
+                        var value = $(this).val();
+                        console.log(value)
+                        var filt = data.filter(data => data.GROUP == value)
+                        render(filt)
+                    });
+                    $("#btn2").on("click", function () {
+                        var value = $(this).val();
+                        console.log(value)
+                        var filt = data.filter(data => data.GROUP == value)
+                        render(filt)
+                    });
+                    $("#btn3").on("click", function () {
+                        var value = $(this).val();
+                        console.log(value)
+                        var filt = data.filter(data => data.GROUP == value)
+                        render(filt)
+                    });
+                });
+            });
+
+        var render = function (dataset) {
+            renderFilter(dataset)
+            renderTable(dataset)
+        }
+
+        var renderFilter = function () {
+            d3.select('.filters')
+                .style('display', 'flex')
+                .call(sel => {
+                    sel.call(createFilter, 'GROUP')
+                });
+        }
+
+        var createFilter = function (sel, filterColumn) {
+            sel.selectAll('.selector-' + filterColumn)
+                .data([{
+                    fieldName: filterColumn
+                }])
+                .join('div').attr('class', 'selector-' + filterColumn)
+                .style('flex', '1 1 auto')
+                .call(sel => {
+                    sel.selectAll('.label').data(d => [d])
+                        .join('div').attr('class', 'label')
+                        .html(filterColumn);
+                    sel.selectAll('select').data(d => [d])
+                        .join('select')
+                        .on('change', function (e, d) {
+                            let data = dataset;
+                            // filter through all select values
+                            d3.select('.filters')
+                                .selectAll('select')
+                                .each(function (d) {
+
+                                    let fieldName = d.fieldName,
+                                        value = d3.select(this).property('value');
+
+                                    if (fieldName && value) {
+                                        data = data.filter(d => d[fieldName] == value)
+                                    }
+
+                                });
+
+                            render(data);
+                        })
+                        .selectAll('option').data(d => {
+
+                            let grouping = d3.groups(dataset, d => d[filterColumn])
+                                .map(d => {
+                                    return {
+                                        key: d[0],
+                                        values: d[1]
+                                    }
+                                });
+                            // insert empty value
+                            grouping.unshift({
+                                key: '',
+                                values: []
+                            });
+                            return grouping
+                        })
+                        .join('option')
+                        .html(d => d.key);
+                });
+        }
+
+        var renderTable = function (dataset) {
+            let column_order = fields
+            //     .sort((a, b) => {
+            //         return d3.ascending(a, b)  // sort by ascending name
+            //     });
+
+            d3.select('.table')
+                .selectAll('table').data([{ data: dataset }])
+                .join('table')
+                .call(sel => {
+                    // thead
+                    sel.selectAll('thead').data(d => [d])
+                        .join('thead')
+                        .selectAll('tr').data(d => [d])
+                        .join('tr')
+                        .selectAll('th')
+                        .data(column_order)
+                        .join('th')
+                        .style('text-transform', 'uppercase')
+                        .html(d => {
+                            return d.replace(/_/g," ")
+                        })
+
+                    // tbody
+                    sel.selectAll('tbody').data(d => [d])
+                        .join('tbody')
+
+                        // rows
+                        .selectAll('tr').data(d => d.data)
+                        .join('tr')
+
+                        // columns
+                        .selectAll('td').data(d => {
+
+                            // sync header with data
+
+                            let k = column_order
+                                .map(p => {
+                                    return {
+                                        column: p,
+                                        data: d
+                                    }
+                                })
+                            return k;
+                        })
+                        .join('td')
+                        .html(d => {
+                            return d.data[d.column];
+                        })
+                    // .on('click', function (e, d) {
+                    //     console.log(d)
+                    // })
+
+                });
+        }
+    </script>
+</body>
+
+</html>
